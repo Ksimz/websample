@@ -24,7 +24,7 @@ class _outPutState extends State<outPut> {
   List<int> years = [];
   List<PercentagePay> interests = [];
   List<PercentagePay> capital = [];
-  List<charts.Series<PercentagePay, String>> _seriesData=[];
+  List<charts.Series<PercentagePay, String>> _seriesData = [];
 
   @override
   void initState() {
@@ -154,8 +154,8 @@ class _outPutState extends State<outPut> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Container(
-              height: MediaQuery.of(context).size.height*0.8,
-              width: MediaQuery.of(context).size.width*0.8,
+              height: MediaQuery.of(context).size.height * 0.8,
+              width: MediaQuery.of(context).size.width * 0.8,
               child: Center(
                 child: Column(
                   children: <Widget>[
@@ -167,23 +167,44 @@ class _outPutState extends State<outPut> {
                     Expanded(
                       child: charts.BarChart(
                         _seriesData,
+                        /*defaultRenderer: charts.BarRendererConfig(
+                          symbolRenderer:charts.Symb
+                        ),*/
                         animate: false,
                         barGroupingType: charts.BarGroupingType.stacked,
                         //behaviors: [new charts.SeriesLegend()],
                         animationDuration: Duration(seconds: 5),
                         behaviors: [
-                          new charts.DatumLegend(
-                            outsideJustification: charts.OutsideJustification.endDrawArea,
+                          /*new charts.DatumLegend(
+                            outsideJustification:
+                                charts.OutsideJustification.endDrawArea,
                             horizontalFirst: false,
                             desiredMaxRows: 2,
-                            cellPadding: new EdgeInsets.only(right: 4.0, bottom: 4.0),
+                            cellPadding:
+                                new EdgeInsets.only(right: 4.0, bottom: 4.0),
                             entryTextStyle: charts.TextStyleSpec(
-                                color: charts.MaterialPalette.purple.shadeDefault,
+                                color:
+                                    charts.MaterialPalette.purple.shadeDefault,
                                 fontFamily: 'Georgia',
                                 fontSize: 11),
-                          ),
-                        ],
+                          ),*/
+                          new charts.SeriesLegend(
 
+                              outsideJustification:
+                              charts.OutsideJustification.endDrawArea,
+                              horizontalFirst: false,
+                              cellPadding:
+                              new EdgeInsets.only(right: 4.0, bottom: 4.0,),
+                              position: charts.BehaviorPosition.end,
+                              entryTextStyle: charts.TextStyleSpec(
+                                  color:
+                                  charts.MaterialPalette.purple.shadeDefault,
+                                  fontFamily: 'Georgia',
+                                  fontSize: 11),
+                              desiredMaxRows: 2)
+                           ,
+
+                        ],
                       ),
                     ),
                   ],
@@ -247,7 +268,7 @@ class _outPutState extends State<outPut> {
       charts.Series(
         domainFn: (PercentagePay percentpay, _) => percentpay.year,
         measureFn: (PercentagePay percentpay, _) => percentpay.percentage,
-        id: '2017',
+        id: 'Interest Payments',
         data: interests,
         fillPatternFn: (_, __) => charts.FillPatternType.solid,
         fillColorFn: (PercentagePay percentpay, _) =>
@@ -259,7 +280,7 @@ class _outPutState extends State<outPut> {
       charts.Series(
         domainFn: (PercentagePay percentpay2, _) => percentpay2.year,
         measureFn: (PercentagePay percentpay2, _) => percentpay2.percentage,
-        id: '2018',
+        id: 'Capital Payments',
         data: capital,
         fillPatternFn: (_, __) => charts.FillPatternType.solid,
         fillColorFn: (PercentagePay percentpay2, _) =>
