@@ -22,9 +22,9 @@ class outPut extends StatefulWidget {
 
 class _outPutState extends State<outPut> {
   List<int> years = [];
-  List<double> interests = [];
-  List<double> capital = [];
-  List<charts.Series<PercentagePay, int>> _seriesData;
+  List<PercentagePay> interests = [];
+  List<PercentagePay> capital = [];
+  List<charts.Series<PercentagePay, String>> _seriesData=[];
 
   @override
   void initState() {
@@ -148,15 +148,55 @@ class _outPutState extends State<outPut> {
                     TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               ),
               SizedBox(height: 25.0),
-              interestTable()
+              //interestTable()
             ],
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Container(
+              height: MediaQuery.of(context).size.height*0.8,
+              width: MediaQuery.of(context).size.width*0.8,
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'Interest Payments vs Capital Payments',
+                      style: TextStyle(
+                          fontSize: 24.0, fontWeight: FontWeight.bold),
+                    ),
+                    Expanded(
+                      child: charts.BarChart(
+                        _seriesData,
+                        animate: false,
+                        barGroupingType: charts.BarGroupingType.stacked,
+                        //behaviors: [new charts.SeriesLegend()],
+                        animationDuration: Duration(seconds: 5),
+                        behaviors: [
+                          new charts.DatumLegend(
+                            outsideJustification: charts.OutsideJustification.endDrawArea,
+                            horizontalFirst: false,
+                            desiredMaxRows: 2,
+                            cellPadding: new EdgeInsets.only(right: 4.0, bottom: 4.0),
+                            entryTextStyle: charts.TextStyleSpec(
+                                color: charts.MaterialPalette.purple.shadeDefault,
+                                fontFamily: 'Georgia',
+                                fontSize: 11),
+                          ),
+                        ],
+
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget interestTable() {
+  /*Widget interestTable() {
     return SafeArea(
       child: Container(
         height: MediaQuery.of(context).size.height*0.8,
@@ -175,7 +215,7 @@ class _outPutState extends State<outPut> {
             }),
       ),
     );
-  }
+  }*/
 
   void calculateInterests() {
     double calInterest;
@@ -189,7 +229,7 @@ class _outPutState extends State<outPut> {
     calInterest =
         widget.years * 12 * widget.monthlyPayment - widget.purchasePrice;
 
-    for (int i = 1; i <=widget.years; i++) {
+    for (int i = 1; i <= widget.years; i++) {
       double cumulativeInterest =
           (((widget.purchasePrice * rate) - widget.monthlyPayment) *
                   ((pow((1 + rate), (i * 12)) - 1) / rate)) +
@@ -198,12 +238,34 @@ class _outPutState extends State<outPut> {
       double percentageInterest =
           ((cumulativeInterest - prevcumulativeInterest) / yearlyPayable) * 100;
       prevcumulativeInterest = cumulativeInterest;
-      interests.add(percentageInterest);
-      capital.add(100 - percentageInterest);
+      interests.add(new PercentagePay(i, percentageInterest));
+      capital.add(new PercentagePay(i, (100 - percentageInterest)));
       years.add(i);
-
-
     }
+
+    _seriesData.add(
+      charts.Series(
+        domainFn: (PercentagePay percentpay, _) => percentpay.year,
+        measureFn: (PercentagePay percentpay, _) => percentpay.percentage,
+        id: '2017',
+        data: interests,
+        fillPatternFn: (_, __) => charts.FillPatternType.solid,
+        fillColorFn: (PercentagePay percentpay, _) =>
+            charts.ColorUtil.fromDartColor(Color(0xff990099)),
+      ),
+    );
+
+    _seriesData.add(
+      charts.Series(
+        domainFn: (PercentagePay percentpay2, _) => percentpay2.year,
+        measureFn: (PercentagePay percentpay2, _) => percentpay2.percentage,
+        id: '2018',
+        data: capital,
+        fillPatternFn: (_, __) => charts.FillPatternType.solid,
+        fillColorFn: (PercentagePay percentpay2, _) =>
+            charts.ColorUtil.fromDartColor(Color(0xff109618)),
+      ),
+    );
 
     print("Interest\n\n");
     print(interests);
@@ -284,8 +346,11 @@ class _outPutState extends State<outPut> {
 
 /// Sample ordinal data type.
 class PercentagePay {
-  int year;
+  String year;
+  final year1;
   double percentage;
 
-  PercentagePay(this.year, this.percentage);
+  PercentagePay(this.year1, this.percentage) {
+    year = year1.toString();
+  }
 }
