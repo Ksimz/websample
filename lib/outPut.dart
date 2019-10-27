@@ -170,7 +170,7 @@ class _outPutState extends State<outPut> {
                         /*defaultRenderer: charts.BarRendererConfig(
                           symbolRenderer:charts.Symb
                         ),*/
-                        animate: false,
+                        animate: true,
                         barGroupingType: charts.BarGroupingType.stacked,
                         //behaviors: [new charts.SeriesLegend()],
                         animationDuration: Duration(seconds: 5),
